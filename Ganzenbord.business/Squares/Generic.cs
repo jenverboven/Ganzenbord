@@ -1,12 +1,12 @@
 ﻿namespace Ganzenbord.Business.Squares
 {
-    internal class Death : ISquare
+    internal class Generic : ISquare
     {
         public int Position { get; set; }
 
         public void PlayerEntersSquare(Player player)
         {
-            player.MoveToPosition(0);
+            return;
         }
     }
 }

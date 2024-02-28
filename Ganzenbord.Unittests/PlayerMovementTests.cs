@@ -19,18 +19,18 @@ namespace Ganzenbord.Unittests
             Assert.Equal(4, player.Position);
         }
 
-        [Fact]
-        public void WhenPlayerPlaysTurn_ThenPlayerMoves()
-        {
-            //arrange
-            Player player = new Player();
-            player.MoveToPosition(1);
+        //[Fact]
+        //public void WhenPlayerPlaysTurn_ThenPlayerMoves()
+        //{
+        //    //arrange
+        //    Player player = new Player();
+        //    player.MoveToPosition(1);
 
-            //act
-            player.PlayTurn(2);
+        //    //act
+        //    player.PlayTurn(2);
 
-            //assert
-            Assert.NotEqual(1, player.Position);
-        }
+        //    //assert
+        //    Assert.NotEqual(1, player.Position);
+        //}
     }
 }

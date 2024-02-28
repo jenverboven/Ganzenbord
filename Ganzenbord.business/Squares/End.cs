@@ -1,12 +1,13 @@
 ﻿namespace Ganzenbord.Business.Squares
 {
-    internal class Death : ISquare
+    internal class End : ISquare
     {
         public int Position { get; set; }
 
         public void PlayerEntersSquare(Player player)
         {
-            player.MoveToPosition(0);
+            player.SetWinner(true);
+            Game.Instance.EndGame();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Ganzenbord.Business.Squares;
-using System;
 
 namespace Ganzenbord.Business
 {
@@ -8,9 +7,9 @@ namespace Ganzenbord.Business
         public int Position { get; private set; }
         public bool CanMove { get; private set; } = true;
         public int TurnsToSkip { get; private set; } = 0;
+        public bool Winner { get; set; } = false;
 
         private static Random random = new Random();
-        //public int Turn { get; private set; } = 1;
 
         public void Move(int[] diceRolls)
         {
@@ -41,6 +40,11 @@ namespace Ganzenbord.Business
             CanMove = canMove;
         }
 
+        public void SetWinner(bool winner)
+        {
+            Winner = winner;
+        }
+
         public void SetTurnsToSkip(int amountTurns)
         {
             TurnsToSkip = amountTurns;
@@ -54,7 +58,15 @@ namespace Ganzenbord.Business
             }
             else if (TurnsToSkip > 0)
             {
-                TurnsToSkip--;
+                SkipTurn(this);
+            }
+        }
+
+        private void SkipTurn(Player player)
+        {
+            if (player.TurnsToSkip > 0)
+            {
+                player.TurnsToSkip--;
 
                 if (TurnsToSkip == 0)
                 {
@@ -77,29 +89,11 @@ namespace Ganzenbord.Business
 
         private void GetSquare(int position)
         {
-            if (position == 6)
-            {
-                ISquare square = new Bridge();
-                square.PlayerEntersSquare(this);
-            }
+            ISquare square = SquareFactory.create(Board.configuration[position], position);
 
-            if (position == 42)
-            {
-                ISquare square = new Maze();
-                square.PlayerEntersSquare(this);
-            }
+            //ISquare square = Game.Instance.board.squares[position];
 
-            if (position == 58)
-            {
-                ISquare square = new Death();
-                square.PlayerEntersSquare(this);
-            }
-
-            if (position == 19)
-            {
-                ISquare square = new Inn();
-                square.PlayerEntersSquare(this);
-            }
+            square.PlayerEntersSquare(this);
         }
     }
 }
