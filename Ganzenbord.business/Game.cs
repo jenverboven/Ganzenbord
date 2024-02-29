@@ -1,4 +1,6 @@
-﻿namespace Ganzenbord.Business
+﻿using Ganzenbord.Business.Players;
+
+namespace Ganzenbord.Business
 {
     public class Game
     {
@@ -10,14 +12,12 @@
 
         public bool End = false;
 
-        // ...
-
         public Game(int amountPlayers)
         {
             board = new Board();
             players = new List<Player>();
 
-            for (int i = 1; i <= amountPlayers; i++)
+            for (int i = 0; i < amountPlayers; i++)
             {
                 Player player = new Player();
                 players.Add(player);
@@ -36,7 +36,7 @@
             }
         }
 
-        private void PlayRound(List<Player> players, int amountDice)
+        private void PlayTurn(List<Player> players, int amountDice)
         {
             if (!End)
             {

@@ -1,6 +1,4 @@
-﻿using Ganzenbord.Business.Squares;
-
-namespace Ganzenbord.Business
+﻿namespace Ganzenbord.Business.Players
 {
     public class Player
     {
@@ -107,7 +105,7 @@ namespace Ganzenbord.Business
             }
         }
 
-        public int[] RollDice(int amount)
+        private int[] RollDice(int amount)
         {
             List<int> rolls = new List<int>();
 
