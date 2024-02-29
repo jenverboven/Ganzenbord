@@ -10,9 +10,17 @@ namespace Ganzenbord.Business.Squares
     {
         public int Position { get; set; }
 
+        private Player? CaughtPlayer { get; set; }
+
         public void PlayerEntersSquare(Player player)
         {
-            throw new NotImplementedException();
+            if (CaughtPlayer != null)
+            {
+                CaughtPlayer.SetCanMove(true);
+            }
+
+            player.SetCanMove(false);
+            CaughtPlayer = player;
         }
     }
 }

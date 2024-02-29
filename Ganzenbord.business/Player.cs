@@ -4,18 +4,55 @@ namespace Ganzenbord.Business
 {
     public class Player
     {
-        public int Position { get; private set; }
+        public int Position { get; private set; } = 0;
         public bool CanMove { get; private set; } = true;
         public int TurnsToSkip { get; private set; } = 0;
-        public bool Winner { get; set; } = false;
+        public bool IsWinner { get; set; } = false;
+        public bool Reverse { get; set; } = false;
 
         private static Random random = new Random();
 
         public void Move(int[] diceRolls)
         {
-            Position += diceRolls.Sum();
+            if (!(Game.Instance.Turn == 1 && diceRolls.Sum() == 9))
+            {
+                MoveRegular(diceRolls);
+            }
+            else
+            {
+                if (diceRolls.Contains(6))
+                {
+                    MoveToPosition(53);
+                }
+                else
+                {
+                    MoveToPosition(26);
+                }
+            }
 
             GetSquare(Position);
+        }
+
+        private void MoveRegular(int[] diceRolls)
+        {
+            int newPosition = Position + diceRolls.Sum();
+
+            if (!Reverse)
+            {
+                if (newPosition <= 63)
+                {
+                    Position = newPosition;
+                }
+                else
+                {
+                    Reverse = true;
+                    Position = 63 - (newPosition - 63);
+                }
+            }
+            else
+            {
+                Position -= diceRolls.Sum();
+            }
         }
 
         public void MoveToPosition(int position)
@@ -25,24 +62,14 @@ namespace Ganzenbord.Business
             GetSquare(position);
         }
 
-        //public void SetTurn(int turn)
-        //{
-        //    Turn = turn;
-        //}
-
-        //public void IncrementTurn()
-        //{
-        //    Turn++;
-        //}
-
         public void SetCanMove(bool canMove)
         {
             CanMove = canMove;
         }
 
-        public void SetWinner(bool winner)
+        public void SetWinner(bool isWinner)
         {
-            Winner = winner;
+            IsWinner = isWinner;
         }
 
         public void SetTurnsToSkip(int amountTurns)
@@ -55,6 +82,11 @@ namespace Ganzenbord.Business
             if (CanMove)
             {
                 Move(RollDice(amountDice));
+
+                if (Reverse)
+                {
+                    Reverse = false;
+                }
             }
             else if (TurnsToSkip > 0)
             {
@@ -89,11 +121,7 @@ namespace Ganzenbord.Business
 
         private void GetSquare(int position)
         {
-            ISquare square = SquareFactory.create(Board.configuration[position], position);
-
-            //ISquare square = Game.Instance.board.squares[position];
-
-            square.PlayerEntersSquare(this);
+            Game.Instance.board.squares[position].PlayerEntersSquare(this);
         }
     }
 }

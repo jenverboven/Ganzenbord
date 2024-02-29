@@ -11,11 +11,11 @@ namespace Ganzenbord.Unittests
             Player player = new Player();
 
             //act
-            int[] rolls = player.RollDice(2);
+            int[] diceRolls = player.RollDice(2);
 
             //assert
-            Assert.Equal(2, rolls.Length);
-            Assert.All(rolls, item => Assert.IsType<int>(item));
+            Assert.Equal(2, diceRolls.Length);
+            Assert.All(diceRolls, item => Assert.IsType<int>(item));
         }
     }
 }

@@ -10,10 +10,10 @@ namespace Ganzenbord.Unittests
             //arrange
             Player player = new Player();
             player.MoveToPosition(3);
-            int[] dice = { 1, 2 };
+            int[] diceRolls = { 1, 2 };
 
             //act
-            player.Move(dice);
+            player.Move(diceRolls);
 
             //assert
             Assert.Equal(12, player.Position);
@@ -49,13 +49,35 @@ namespace Ganzenbord.Unittests
         [Fact]
         public void WhenFirstPlayerLandsOnWell_SetCanMoveToFalse()
         {
-            throw new NotImplementedException();
+            //arrange
+            Player player = new Player();
+            player.MoveToPosition(29);
+            int[] diceRolls = { 1, 1 };
+
+            //act
+            player.Move(diceRolls);
+
+            //assert
+            Assert.False(player.CanMove);
         }
 
         [Fact]
         public void WhenSecondPlayerLandsOnWell_SetCanMoveToFalseAndReleaseOtherPlayer()
         {
-            throw new NotImplementedException();
+            //arrange
+            Player player1 = new Player();
+            Player player2 = new Player();
+            player1.MoveToPosition(29);
+            player2.MoveToPosition(29);
+            int[] diceRolls = { 1, 1 };
+
+            //act
+            player1.Move(diceRolls);
+            player2.Move(diceRolls);
+
+            //assert
+            Assert.True(player1.CanMove);
+            Assert.False(player2.CanMove);
         }
 
         [Fact]
@@ -111,7 +133,7 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerLandsOnDeath_PutPlayerOnStart()
         {
             //arrange
-            Player player = new Player();
+            Player player = new();
             player.MoveToPosition(53);
             int[] diceRolls = { 4, 1 };
 
@@ -126,16 +148,21 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerLandsOnEnd_EndGame()
         {
             //arrange
-            Player player = new Player();
-            player.MoveToPosition(61);
+            Player player1 = new Player();
+            Player player2 = new Player();
+
+            player1.MoveToPosition(61);
+            player2.MoveToPosition(1);
+
             int[] diceRolls = { 1, 1 };
 
             //act
-            player.Move(diceRolls);
+            player1.Move(diceRolls);
 
             //assert
             Assert.True(Game.Instance.End);
-            Assert.True(player.Winner);
+            Assert.True(player1.IsWinner);
+            Assert.False(player2.IsWinner);
         }
     }
 }

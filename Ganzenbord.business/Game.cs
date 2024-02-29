@@ -3,10 +3,9 @@
     public class Game
     {
         public static Game instance;
-        public Board board;
+        public Board board { get; set; }
         private List<Player> players;
         public int Turn { get; private set; } = 1;
-
         private int AmountDice = 2;
 
         public bool End = false;
@@ -52,6 +51,11 @@
         internal void EndGame()
         {
             End = true;
+        }
+
+        public void SetTurn(int turn)
+        {
+            Turn = turn;
         }
     }
 }
