@@ -9,7 +9,6 @@ namespace Ganzenbord.Business.Squares
         public void PlayerEntersSquare(Player player)
         {
             player.SetWinner(true);
-            Game.Instance.EndGame();
         }
     }
 }

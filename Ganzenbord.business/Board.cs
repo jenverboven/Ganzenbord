@@ -4,7 +4,8 @@ namespace Ganzenbord.Business
 {
     public class Board
     {
-        public List<ISquare> squares = new List<ISquare>();
+        private static Board instance;
+        private List<ISquare> squares = new List<ISquare>();
 
         private static readonly Dictionary<int, SquareType> configuration = new Dictionary<int, SquareType>
         {
@@ -32,6 +33,23 @@ namespace Ganzenbord.Business
                     squares.Add(SquareFactory.create(SquareType.Generic, i));
                 }
             }
+        }
+
+        public static Board Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Board();
+                }
+                return instance;
+            }
+        }
+
+        public ISquare GetSquare(int position)
+        {
+            return squares.Single(square => square.Position == position);
         }
     }
 }

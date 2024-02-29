@@ -1,3 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-Console.WriteLine("Hello world!");
+using Ganzenbord;
+using Ganzenbord.Business;
+
+ILogger logger = new ConsoleLogger();
+int amountPlayers = Int32.Parse(Console.ReadLine());
+Game game = new(logger, amountPlayers);

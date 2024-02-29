@@ -4,51 +4,46 @@ namespace Ganzenbord.Business
 {
     public class Game
     {
-        public static Game instance;
-        public Board board { get; set; }
-        private List<Player> players;
         public int Turn { get; private set; } = 1;
+        public bool End { get; private set; } = false;
+
+        private Board Board { get; set; }
+        private List<Player> Players;
         private int AmountDice = 2;
+        private ILogger Logger;
 
-        public bool End = false;
-
-        public Game(int amountPlayers)
+        public Game(ILogger logger, int amountPlayers)
         {
-            board = new Board();
-            players = new List<Player>();
+            Logger = logger;
+            Board = new Board();
+            Players = new List<Player>();
 
             for (int i = 0; i < amountPlayers; i++)
             {
-                Player player = new Player();
-                players.Add(player);
+                Player player = new();
+                Players.Add(player);
             }
         }
 
-        public static Game Instance
+        private void PlayRound(List<Player> players)
         {
-            get
+            if (Turn == 1)
             {
-                if (instance == null)
-                {
-                    instance = new Game(4);
-                }
-                return instance;
             }
+
+            foreach (Player player in players)
+            {
+                if (player.IsWinner)
+                {
+                    EndGame();
+                    break;
+                }
+                player.PlayTurn(AmountDice);
+            }
+            Turn++;
         }
 
-        private void PlayTurn(List<Player> players, int amountDice)
-        {
-            if (!End)
-            {
-                foreach (Player player in players)
-                {
-                    player.PlayTurn(amountDice);
-                }
-                Turn++;
-            }
-        }
-
-        internal void EndGame()
+        public void EndGame()
         {
             End = true;
         }
@@ -56,6 +51,16 @@ namespace Ganzenbord.Business
         public void SetTurn(int turn)
         {
             Turn = turn;
+        }
+
+        public void Start()
+        {
+            while (!End)
+            {
+                PlayRound(Players);
+            }
+
+            Logger.LogMessage("player x won the game");
         }
     }
 }

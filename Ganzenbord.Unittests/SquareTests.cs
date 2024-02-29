@@ -1,5 +1,6 @@
 ﻿using Ganzenbord.Business;
 using Ganzenbord.Business.Players;
+using Moq;
 
 namespace Ganzenbord.Unittests
 {
@@ -152,6 +153,10 @@ namespace Ganzenbord.Unittests
             Player player1 = new Player();
             Player player2 = new Player();
 
+            var mockLogger = new Mock<ILogger>();
+            Game game = new Game(mockLogger.Object, 1);
+            game.SetTurn(1);
+
             player1.MoveToPosition(61);
             player2.MoveToPosition(1);
 
@@ -161,7 +166,7 @@ namespace Ganzenbord.Unittests
             player1.Move(diceRolls);
 
             //assert
-            Assert.True(Game.Instance.End);
+            Assert.True(game.End);
             Assert.True(player1.IsWinner);
             Assert.False(player2.IsWinner);
         }

@@ -1,5 +1,6 @@
 using Ganzenbord.Business;
 using Ganzenbord.Business.Players;
+using Moq;
 
 namespace Ganzenbord.Unittests
 {
@@ -33,7 +34,7 @@ namespace Ganzenbord.Unittests
 
             //assert
             Assert.Equal(60, player.Position);
-            Assert.True(player.Reverse);
+            Assert.True(player.IsReverse);
         }
 
         [Fact]
@@ -47,7 +48,7 @@ namespace Ganzenbord.Unittests
             player.PlayTurn(2);
 
             //assert
-            Assert.False(player.Reverse);
+            Assert.False(player.IsReverse);
         }
 
         [Fact]
@@ -56,7 +57,10 @@ namespace Ganzenbord.Unittests
             //arrange
             Player player = new();
             int[] diceRolls = [6, 3];
-            Game.Instance.SetTurn(1);
+
+            var mockLogger = new Mock<ILogger>();
+            Game game = new Game(mockLogger.Object, 1);
+            game.SetTurn(1);
 
             //act
             player.Move(diceRolls);
@@ -71,7 +75,10 @@ namespace Ganzenbord.Unittests
             //arrange
             Player player = new();
             int[] diceRolls = [4, 5];
-            Game.Instance.SetTurn(1);
+
+            var mockLogger = new Mock<ILogger>();
+            Game game = new Game(mockLogger.Object, 1);
+            game.SetTurn(1);
 
             //act
             player.Move(diceRolls);
@@ -87,7 +94,10 @@ namespace Ganzenbord.Unittests
             Player player = new();
             player.MoveToPosition(1);
             int[] diceRolls = [5, 4];
-            Game.Instance.SetTurn(2);
+
+            var mockLogger = new Mock<ILogger>();
+            Game game = new Game(mockLogger.Object, 1);
+            game.SetTurn(2);
 
             //act
             player.Move(diceRolls);

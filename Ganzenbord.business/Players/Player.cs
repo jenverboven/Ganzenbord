@@ -1,41 +1,25 @@
-﻿namespace Ganzenbord.Business.Players
+﻿using Ganzenbord.Business.Squares;
+
+namespace Ganzenbord.Business.Players
 {
     public class Player
     {
-        public int Position { get; private set; } = 0;
-        public bool CanMove { get; private set; } = true;
-        public int TurnsToSkip { get; private set; } = 0;
-        public bool IsWinner { get; set; } = false;
-        public bool Reverse { get; set; } = false;
-
         private static Random random = new Random();
+
+        public bool CanMove { get; private set; } = true;
+
+        //public bool CanMove => TurnsToSkip > 0;
+        public bool IsReverse { get; set; } = false;
+
+        public bool IsWinner { get; set; } = false;
+        public int Position { get; private set; } = 0;
+        public int TurnsToSkip { get; private set; } = 0;
 
         public void Move(int[] diceRolls)
         {
-            if (!(Game.Instance.Turn == 1 && diceRolls.Sum() == 9))
-            {
-                MoveRegular(diceRolls);
-            }
-            else
-            {
-                if (diceRolls.Contains(6))
-                {
-                    MoveToPosition(53);
-                }
-                else
-                {
-                    MoveToPosition(26);
-                }
-            }
-
-            GetSquare(Position);
-        }
-
-        private void MoveRegular(int[] diceRolls)
-        {
             int newPosition = Position + diceRolls.Sum();
 
-            if (!Reverse)
+            if (!IsReverse)
             {
                 if (newPosition <= 63)
                 {
@@ -43,7 +27,7 @@
                 }
                 else
                 {
-                    Reverse = true;
+                    IsReverse = true;
                     Position = 63 - (newPosition - 63);
                 }
             }
@@ -51,28 +35,14 @@
             {
                 Position -= diceRolls.Sum();
             }
+
+            HandlePlayerEnteringSquare(Position);
         }
 
         public void MoveToPosition(int position)
         {
             Position = position;
-
-            GetSquare(position);
-        }
-
-        public void SetCanMove(bool canMove)
-        {
-            CanMove = canMove;
-        }
-
-        public void SetWinner(bool isWinner)
-        {
-            IsWinner = isWinner;
-        }
-
-        public void SetTurnsToSkip(int amountTurns)
-        {
-            TurnsToSkip = amountTurns;
+            HandlePlayerEnteringSquare(position);
         }
 
         public void PlayTurn(int amountDice)
@@ -81,45 +51,62 @@
             {
                 Move(RollDice(amountDice));
 
-                if (Reverse)
-                {
-                    Reverse = false;
-                }
+                IsReverse = false;
+                //altijd loggen met logger klasse
             }
             else if (TurnsToSkip > 0)
             {
                 SkipTurn(this);
             }
+            //niet zelfde afchecken meerdere keren
+        }
+
+        public int[] RollDice(int amount)
+        {
+            int[] myArray = new int[amount];
+
+            for (int i = 0; i < amount; i++)
+            {
+                myArray[i] = random.Next(1, 7);
+            }
+
+            return myArray;
+        }
+
+        public void SetCanMove(bool canMove)
+        {
+            CanMove = canMove;
+        }
+
+        public void SetTurnsToSkip(int amountTurns)
+        {
+            TurnsToSkip = amountTurns;
+        }
+
+        public void SetWinner(bool isWinner)
+        {
+            IsWinner = isWinner;
+        }
+
+        private void HandlePlayerEnteringSquare(int position)
+        {
+            ISquare square = Board.Instance.GetSquare(position);
+
+            square.PlayerEntersSquare(this);
+            //hier zoeken naar vakje met position property van vakje zelf
         }
 
         private void SkipTurn(Player player)
         {
-            if (player.TurnsToSkip > 0)
+            if (player.TurnsToSkip <= 0) return;
+
+            player.TurnsToSkip--;
+
+            if (TurnsToSkip == 0)
             {
-                player.TurnsToSkip--;
-
-                if (TurnsToSkip == 0)
-                {
-                    CanMove = true;
-                }
+                CanMove = true;
             }
-        }
-
-        private int[] RollDice(int amount)
-        {
-            List<int> rolls = new List<int>();
-
-            for (int i = 0; i < amount; i++)
-            {
-                rolls.Add(random.Next(1, 7));
-            }
-
-            return rolls.ToArray();
-        }
-
-        private void GetSquare(int position)
-        {
-            Game.Instance.board.squares[position].PlayerEntersSquare(this);
+            //zo weinig mogelijk nesting
         }
     }
 }
