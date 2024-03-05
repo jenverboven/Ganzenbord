@@ -1,17 +1,24 @@
 ﻿namespace Ganzenbord.Business.Players
 {
-    internal interface IPlayer
+    public interface IPlayer
     {
-        public int Position { get; set; }
-        public bool CanMove { get; set; }
-        public int TurnsToSkip { get; set; }
-        public bool Reverse { get; set; }
-        public bool IsWinner { get; set; }
+        bool CanMove { get; }
+        bool MovesBackwards { get; set; }
+        bool IsWinner { get; set; }
+        string Player_ID { get; set; }
+        int Position { get; }
+        int TurnsToSkip { get; }
 
-        public void Move(int[] diceRolls);
+        void Move();
 
-        public void MoveToPosition(int position);
+        void MoveToPosition(int position);
 
-        public void PlayTurn(int amountDice);
+        void PlayTurn();
+
+        void SetCanMove(bool canMove);
+
+        void SetTurnsToSkip(int amountTurns);
+
+        void SetWinner(bool isWinner);
     }
 }

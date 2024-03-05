@@ -15,7 +15,20 @@ namespace Ganzenbord.Business
             { 42, SquareType.Maze },
             { 52, SquareType.Prison },
             { 58, SquareType.Death },
-            { 63, SquareType.End }
+            { 63, SquareType.End },
+            { 5, SquareType.Goose },
+            { 9, SquareType.Goose },
+            { 14, SquareType.Goose },
+            { 18, SquareType.Goose },
+            { 23, SquareType.Goose },
+            { 27, SquareType.Goose },
+            { 32, SquareType.Goose },
+            { 36, SquareType.Goose },
+            { 41, SquareType.Goose },
+            { 45, SquareType.Goose },
+            { 50, SquareType.Goose },
+            { 54, SquareType.Goose },
+            { 59, SquareType.Goose },
         };
 
         public Board()

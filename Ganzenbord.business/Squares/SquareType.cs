@@ -9,6 +9,7 @@
         Inn,
         Maze,
         Prison,
-        Well
+        Well,
+        Goose
     }
 }

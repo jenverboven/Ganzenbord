@@ -3,6 +3,9 @@
 using Ganzenbord;
 using Ganzenbord.Business;
 
-ILogger logger = new ConsoleLogger();
-int amountPlayers = Int32.Parse(Console.ReadLine());
-Game game = new(logger, amountPlayers);
+//ILogger logger = new ConsoleLogger();
+//int amountPlayers = Int32.Parse(Console.ReadLine());
+//Game game = new(logger, amountPlayers);
+//game.Start();
+
+Console.WriteLine("Hello world");

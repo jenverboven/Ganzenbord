@@ -1,4 +1,6 @@
-﻿using Ganzenbord.Business.Players;
+﻿using Ganzenbord.Business.Dice;
+using Ganzenbord.Business.Players;
+using Moq;
 
 namespace Ganzenbord.Unittests
 {
@@ -8,10 +10,10 @@ namespace Ganzenbord.Unittests
         public void WhenRollTwoDice_ReturnArrayOfTwoIntegers()
         {
             //arrange
-            Player player = new Player();
+            Dice dice = new(2);
 
             //act
-            int[] diceRolls = player.RollDice(2);
+            int[] diceRolls = dice.RollDice();
 
             //assert
             Assert.Equal(2, diceRolls.Length);

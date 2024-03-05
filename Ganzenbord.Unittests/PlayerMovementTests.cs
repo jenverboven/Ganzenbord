@@ -1,4 +1,5 @@
 using Ganzenbord.Business;
+using Ganzenbord.Business.Dice;
 using Ganzenbord.Business.Players;
 using Moq;
 
@@ -10,12 +11,15 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerRollsDice_ThenPlayerMoves()
         {
             //arrange
-            Player player = new Player();
+            var mockLogger = new Mock<ILogger>();
+            var mockDice = new Mock<Dice>();
+            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Player player = game.Players[0];
             player.MoveToPosition(1);
-            int[] diceRolls = { 1, 2 };
+            player.LastRolls = [1, 2];
 
             //act
-            player.Move(diceRolls);
+            player.Move();
 
             //assert
             Assert.Equal(4, player.Position);
@@ -25,85 +29,100 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerPassesEnd_ReverseMovementDirection()
         {
             //arrange
-            Player player = new Player();
+            var mockLogger = new Mock<ILogger>();
+            var mockDice = new Mock<Dice>();
+            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Player player = game.Players[0];
             player.MoveToPosition(62);
-            int[] diceRolls = { 1, 3 };
+            player.LastRolls = [2, 2];
 
             //act
-            player.Move(diceRolls);
+            player.Move();
 
             //assert
             Assert.Equal(60, player.Position);
-            Assert.True(player.IsReverse);
+            Assert.True(player.MovesBackwards);
         }
 
         [Fact]
         public void WhenPlayerMovedBackwards_ReverseFalseAtEndOfTurn()
         {
             //arrange
-            Player player = new Player();
+            var mockLogger = new Mock<ILogger>();
+            var mockDice = new Mock<Dice>();
+            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+
+            Player player = game.Players[0];
+            player.LastRolls = [1, 2];
+
             player.MoveToPosition(62);
 
             //act
-            player.PlayTurn(2);
+            player.PlayTurn();
 
             //assert
-            Assert.False(player.IsReverse);
+            Assert.False(player.MovesBackwards);
         }
 
-        [Fact]
-        public void WhenIsTurnOne_CheckForPlayerMoveException1()
+        [Theory]
+        [InlineData(new int[] { 6, 3 }, 1, 53)]
+        [InlineData(new int[] { 3, 6 }, 1, 53)]
+        [InlineData(new int[] { 4, 5 }, 1, 26)]
+        [InlineData(new int[] { 5, 4 }, 1, 26)]
+        public void TestPlayerMoveExceptionsOnDifferentTurns(int[] diceRolls, int turn, int endPosition)
         {
             //arrange
-            Player player = new();
-            int[] diceRolls = [6, 3];
-
             var mockLogger = new Mock<ILogger>();
-            Game game = new Game(mockLogger.Object, 1);
-            game.SetTurn(1);
+            var mockDice = new Mock<Dice>();
+
+            mockDice.Setup(dice => dice.RollDice()).Returns(diceRolls);
+
+            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+
+            Player player = game.Players[0];
+
+            game.SetTurn(turn);
 
             //act
-            player.Move(diceRolls);
+            game.PlayRound(game.Players);
 
             //assert
-            Assert.Equal(53, player.Position);
-        }
-
-        [Fact]
-        public void WhenIsTurnOne_CheckForPlayerMoveException2()
-        {
-            //arrange
-            Player player = new();
-            int[] diceRolls = [4, 5];
-
-            var mockLogger = new Mock<ILogger>();
-            Game game = new Game(mockLogger.Object, 1);
-            game.SetTurn(1);
-
-            //act
-            player.Move(diceRolls);
-
-            //assert
-            Assert.Equal(26, player.Position);
+            Assert.Equal(endPosition, player.Position);
         }
 
         [Fact]
         public void WhenIsNotTurnOne_CheckForNoPlayerMoveException()
         {
             //arrange
-            Player player = new();
-            player.MoveToPosition(1);
-            int[] diceRolls = [5, 4];
-
             var mockLogger = new Mock<ILogger>();
-            Game game = new Game(mockLogger.Object, 1);
+            var mockDice = new Mock<Dice>();
+            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Player player = game.Players[0];
+            player.MoveToPosition(1);
+            player.LastRolls = [5, 4];
+
             game.SetTurn(2);
 
             //act
-            player.Move(diceRolls);
+            player.Move();
 
             //assert
             Assert.Equal(10, player.Position);
+        }
+
+        [Fact]
+        public void WhenPlayerMovesBackwards_PlayerCantMovePastStart()
+        {
+            //arrange
+            Player player = new Player("player1");
+            player.MoveToPosition(62);
+            player.LastRolls = [40, 30];
+
+            //act
+            player.Move();
+
+            //assert
+            Assert.Equal(0, player.Position);
         }
 
         //[Fact]

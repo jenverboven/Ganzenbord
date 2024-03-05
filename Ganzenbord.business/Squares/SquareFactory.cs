@@ -46,6 +46,11 @@
                     generic.Position = position;
                     return generic;
 
+                case SquareType.Goose:
+                    Goose goose = new Goose();
+                    goose.Position = position;
+                    return goose;
+
                 default:
                     throw new NotImplementedException();
             }
