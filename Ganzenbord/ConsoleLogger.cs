@@ -1,4 +1,4 @@
-﻿using Ganzenbord.Business;
+﻿using Ganzenbord.Business.Logger;
 
 namespace Ganzenbord
 {

@@ -1,4 +1,6 @@
-﻿namespace Ganzenbord.Business.Players
+﻿using Ganzenbord.Business.Logger;
+
+namespace Ganzenbord.Business.Players
 {
     public interface IPlayer
     {

@@ -1,4 +1,4 @@
-﻿namespace Ganzenbord.Business
+﻿namespace Ganzenbord.Business.Logger
 {
     public interface ILogger
     {

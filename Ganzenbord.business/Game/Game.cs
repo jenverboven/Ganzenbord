@@ -1,9 +1,11 @@
-﻿using Ganzenbord.Business.Dice;
+﻿using Ganzenbord.Business.Board;
+using Ganzenbord.Business.Dice;
+using Ganzenbord.Business.Logger;
 using Ganzenbord.Business.Players;
 
-namespace Ganzenbord.Business
+namespace Ganzenbord.Business.Game
 {
-    public class Game
+    public class Game : IGame
     {
         public int Turn { get; private set; } = 1;
         public bool HasEnded { get; private set; } = false;
@@ -11,19 +13,32 @@ namespace Ganzenbord.Business
         public int AmountDice = 2;
 
         private ILogger Logger;
-        private IDice dice { get; set; }
+        private readonly IBoard _board;
+        public IDice Dice { get; set; }
 
-        public Game(ILogger logger, IDice _dice, int amountPlayers)
+        public Game(ILogger logger, IBoard board, IDice dice, int amountPlayers = 2)
         {
             Logger = logger;
-            dice = _dice;
+            _board = board;
+            Dice = dice;
             Players = new List<Player>();
 
             for (int i = 0; i < amountPlayers; i++)
             {
-                Player player = new(logger, $"Player_{i + 1}");
+                Player player = new(logger, board, $"Player_{i + 1}");
                 Players.Add(player);
             }
+        }
+
+        public void Start()
+        {
+            while (!HasEnded)
+            {
+                PlayRound(Players);
+            }
+
+            Player winner = Players.Single(player => player.IsWinner);
+            Logger.LogMessage($"{winner.Player_ID} has landed on the end and won the game!");
         }
 
         public void PlayRound(List<Player> players)
@@ -49,7 +64,7 @@ namespace Ganzenbord.Business
         {
             foreach (Player player in players)
             {
-                player.LastRolls = dice.RollDice();
+                player.LastRolls = Dice.RollDice();
                 LogDiceRolls(player);
 
                 if (player.LastRolls.Sum() != 9)
@@ -65,16 +80,11 @@ namespace Ganzenbord.Business
             }
         }
 
-        private void LogDiceRolls(Player player)
-        {
-            Logger.LogMessage($"{player.Player_ID} rolled {player.LastRolls.Sum()}");
-        }
-
         private void PlayRegularTurn(List<Player> players)
         {
             foreach (Player player in players)
             {
-                player.LastRolls = dice.RollDice();
+                player.LastRolls = Dice.RollDice();
 
                 if (player.CanMove)
                 {
@@ -117,15 +127,9 @@ namespace Ganzenbord.Business
             Turn = turn;
         }
 
-        public void Start()
+        private void LogDiceRolls(Player player)
         {
-            while (!HasEnded)
-            {
-                PlayRound(Players);
-            }
-
-            Player winner = Players.Single(player => player.IsWinner);
-            Logger.LogMessage($"{winner.Player_ID} has landed on the end and won the game!");
+            Logger.LogMessage($"{player.Player_ID} rolled {player.LastRolls.Sum()}");
         }
     }
 }

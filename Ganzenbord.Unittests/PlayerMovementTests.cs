@@ -1,19 +1,31 @@
-using Ganzenbord.Business;
+using Ganzenbord.Business.Board;
 using Ganzenbord.Business.Dice;
+using Ganzenbord.Business.Game;
+using Ganzenbord.Business.Logger;
 using Ganzenbord.Business.Players;
+using Ganzenbord.Business.Squares;
 using Moq;
 
 namespace Ganzenbord.Unittests
 {
     public class PlayerMovementTests
     {
+        private Game SetupGame()
+        {
+            var mockLogger = new Mock<ILogger>();
+            var mockDice = new Mock<Dice>();
+            Board board = new Board(new SquareFactory());
+
+            Game game = new Game(mockLogger.Object, board, mockDice.Object, 1);
+
+            return game;
+        }
+
         [Fact]
         public void WhenPlayerRollsDice_ThenPlayerMoves()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame();
             Player player = game.Players[0];
             player.MoveToPosition(1);
             player.LastRolls = [1, 2];
@@ -29,9 +41,7 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerPassesEnd_ReverseMovementDirection()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame();
             Player player = game.Players[0];
             player.MoveToPosition(62);
             player.LastRolls = [2, 2];
@@ -48,9 +58,7 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerMovedBackwards_ReverseFalseAtEndOfTurn()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame();
 
             Player player = game.Players[0];
             player.LastRolls = [1, 2];
@@ -73,11 +81,12 @@ namespace Ganzenbord.Unittests
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
+            Board board = new Board(new SquareFactory());
             var mockDice = new Mock<Dice>();
 
             mockDice.Setup(dice => dice.RollDice()).Returns(diceRolls);
 
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = new Game(mockLogger.Object, board, mockDice.Object, 1);
 
             Player player = game.Players[0];
 
@@ -94,9 +103,8 @@ namespace Ganzenbord.Unittests
         public void WhenIsNotTurnOne_CheckForNoPlayerMoveException()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame();
+
             Player player = game.Players[0];
             player.MoveToPosition(1);
             player.LastRolls = [5, 4];
@@ -115,7 +123,9 @@ namespace Ganzenbord.Unittests
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
-            Player player = new Player(mockLogger.Object, "player1");
+            Board board = new Board(new SquareFactory());
+
+            Player player = new Player(mockLogger.Object, board, "player1");
             player.MoveToPosition(62);
             player.LastRolls = [40, 30];
 
@@ -125,19 +135,5 @@ namespace Ganzenbord.Unittests
             //assert
             Assert.Equal(0, player.Position);
         }
-
-        //[Fact]
-        //public void WhenPlayerPlaysTurn_ThenPlayerMoves()
-        //{
-        //    //arrange
-        //    Player player = new Player();
-        //    player.MoveToPosition(1);
-
-        //    //act
-        //    player.PlayTurn(2);
-
-        //    //assert
-        //    Assert.NotEqual(1, player.Position);
-        //}
     }
 }

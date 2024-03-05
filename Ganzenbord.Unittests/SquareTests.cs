@@ -1,19 +1,33 @@
-﻿using Ganzenbord.Business;
+﻿using Ganzenbord.Business.Board;
 using Ganzenbord.Business.Dice;
+using Ganzenbord.Business.Game;
+using Ganzenbord.Business.Logger;
 using Ganzenbord.Business.Players;
+using Ganzenbord.Business.Squares;
 using Moq;
 
 namespace Ganzenbord.Unittests
 {
     public class SquareTests
     {
+        private Game SetupGame(int amountPlayers)
+        {
+            var mockLogger = new Mock<ILogger>();
+            var mockDice = new Mock<Dice>();
+            Board board = new Board(new SquareFactory());
+
+            Game game = new Game(mockLogger.Object, board, mockDice.Object, amountPlayers);
+
+            return game;
+        }
+
+        // Bridge
+        // ------
         [Fact]
         public void WhenPlayerLandsOnBridge_PutPlayerOnSquare12()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame(1);
 
             Player player = game.Players[0];
 
@@ -27,19 +41,13 @@ namespace Ganzenbord.Unittests
             Assert.Equal(12, player.Position);
         }
 
-        //[Fact(Skip = "niet klaar")]
-        //public void Authentication_Works()
-        //{
-        //    Assert.Fail();
-        //}
-
+        // Inn
+        // ---
         [Fact]
         public void WhenPlayerLandsOnInn_MakePlayerSkipTurn()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame(1);
 
             Player player = game.Players[0];
 
@@ -59,13 +67,13 @@ namespace Ganzenbord.Unittests
             Assert.Equal(0, player.TurnsToSkip);
         }
 
+        // Well
+        // ----
         [Fact]
         public void WhenFirstPlayerLandsOnWell_SetCanMoveToFalse()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame(1);
 
             Player player = game.Players[0];
 
@@ -83,9 +91,7 @@ namespace Ganzenbord.Unittests
         public void WhenSecondPlayerLandsOnWell_SetCanMoveToFalseAndReleaseOtherPlayer()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 2);
+            Game game = SetupGame(2);
 
             Player player1 = game.Players[0];
             Player player2 = game.Players[1];
@@ -104,12 +110,15 @@ namespace Ganzenbord.Unittests
             Assert.False(player2.CanMove);
         }
 
+        // Maze
+        // ----
         [Fact]
         public void WhenPlayerLandsOnMaze_PutPlayerOnSquare39()
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
-            Player player = new Player(mockLogger.Object, "player1");
+            Board board = new Board(new SquareFactory());
+            Player player = new Player(mockLogger.Object, board, "player1");
 
             player.MoveToPosition(34);
             player.LastRolls = [5, 3];
@@ -121,13 +130,13 @@ namespace Ganzenbord.Unittests
             Assert.Equal(39, player.Position);
         }
 
+        // Prison
+        // ------
         [Fact]
         public void WhenPlayerLandsOnPrison_PlayerCanMoveAfterThreeTurns()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame(1);
 
             Player player = game.Players[0];
 
@@ -149,10 +158,7 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerLandsOnPrison_PlayerCantMoveAfterOneTurn()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
-
+            Game game = SetupGame(1);
             Player player = game.Players[0];
 
             player.MoveToPosition(49);
@@ -167,13 +173,13 @@ namespace Ganzenbord.Unittests
             Assert.Equal(2, player.TurnsToSkip);
         }
 
+        // Death
+        // -----
         [Fact]
         public void WhenPlayerLandsOnDeath_PutPlayerOnStart()
         {
             //arrange
-            var mockLogger = new Mock<ILogger>();
-            var mockDice = new Mock<Dice>();
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = SetupGame(1);
 
             Player player = game.Players[0];
 
@@ -187,18 +193,21 @@ namespace Ganzenbord.Unittests
             Assert.Equal(0, player.Position);
         }
 
+        // End
+        // ---
         [Fact]
         public void WhenPlayerLandsOnEnd_EndGame()
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
+            Board board = new Board(new SquareFactory());
             var mockDice = new Mock<Dice>();
 
             mockDice.SetupSequence(dice => dice.RollDice())
                 .Returns([1, 1])
                 .Returns([2, 3]);
 
-            Game game = new Game(mockLogger.Object, mockDice.Object, 2);
+            Game game = new Game(mockLogger.Object, board, mockDice.Object, 2);
 
             Player player1 = game.Players[0];
             Player player2 = game.Players[1];
@@ -214,5 +223,13 @@ namespace Ganzenbord.Unittests
             Assert.True(player1.IsWinner);
             Assert.False(player2.IsWinner);
         }
+
+        // Voorbeeld van test die geskipt moet worden
+
+        //[Fact(Skip = "niet klaar")]
+        //public void Authentication_Works()
+        //{
+        //    Assert.Fail();
+        //}
     }
 }

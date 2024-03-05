@@ -1,13 +1,15 @@
 ﻿using Ganzenbord.Business.Squares;
 
-namespace Ganzenbord.Business
+namespace Ganzenbord.Business.Board
 {
-    public class Board
+    public class Board : IBoard
     {
-        private static Board instance;
-        private List<ISquare> squares = new List<ISquare>();
+        //private static Board instance;
+        private readonly List<ISquare> squares = [];
 
-        private static readonly Dictionary<int, SquareType> configuration = new Dictionary<int, SquareType>
+        private readonly ISquareFactory _squareFactory;
+
+        private readonly Dictionary<int, SquareType> configuration = new()
         {
             { 6, SquareType.Bridge },
             { 19, SquareType.Inn },
@@ -31,34 +33,36 @@ namespace Ganzenbord.Business
             { 59, SquareType.Goose },
         };
 
-        public Board()
+        public Board(ISquareFactory squareFactory)
+        {
+            _squareFactory = squareFactory;
+
+            CreateBoard();
+        }
+
+        private void CreateBoard()
         {
             for (int i = 0; i < 64; i++)
             {
-                if (configuration.ContainsKey(i))
+                if (configuration.TryGetValue(i, out SquareType type))
                 {
-                    SquareType type = configuration[i];
-
-                    squares.Add(SquareFactory.Create(type, i));
+                    squares.Add(_squareFactory.Create(type, i));
                 }
                 else
                 {
-                    squares.Add(SquareFactory.Create(SquareType.Generic, i));
+                    squares.Add(_squareFactory.Create(SquareType.Generic, i));
                 }
             }
         }
 
-        public static Board Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Board();
-                }
-                return instance;
-            }
-        }
+        //public static Board Instance
+        //{
+        //    get
+        //    {
+        //        instance ??= new Board();
+        //        return instance;
+        //    }
+        //}
 
         public ISquare GetSquare(int position)
         {

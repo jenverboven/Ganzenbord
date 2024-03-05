@@ -1,8 +1,8 @@
 ﻿namespace Ganzenbord.Business.Squares
 {
-    public class SquareFactory
+    public class SquareFactory : ISquareFactory
     {
-        public static ISquare Create(SquareType type, int position)
+        public ISquare Create(SquareType type, int position)
         {
             switch (type)
             {

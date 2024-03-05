@@ -1,4 +1,6 @@
-﻿using Ganzenbord.Business.Squares;
+﻿using Ganzenbord.Business.Board;
+using Ganzenbord.Business.Logger;
+using Ganzenbord.Business.Squares;
 
 namespace Ganzenbord.Business.Players
 {
@@ -6,19 +8,18 @@ namespace Ganzenbord.Business.Players
     {
         public string Player_ID { get; set; }
         public bool CanMove { get; private set; } = true;
-
-        //public bool CanMove => TurnsToSkip > 0;
         public bool MovesBackwards { get; set; } = false;
-
         public bool IsWinner { get; set; } = false;
         public int Position { get; set; } = 0;
         public int TurnsToSkip { get; private set; } = 0;
         public int[] LastRolls { get; set; } = [0, 0];
         public ILogger Logger { get; }
+        private IBoard _board;
 
-        public Player(ILogger logger, string player_ID)
+        public Player(ILogger logger, IBoard board, string player_ID)
         {
             Logger = logger;
+            _board = board;
             Player_ID = player_ID;
         }
 
@@ -38,6 +39,43 @@ namespace Ganzenbord.Business.Players
             HandlePlayerEnteringSquare(Position);
 
             Logger.LogMessage("");
+        }
+
+        public void MoveToPosition(int position)
+        {
+            Position = position;
+            HandlePlayerEnteringSquare(position);
+        }
+
+        public void PlayTurn()
+        {
+            if (CanMove)
+            {
+                Move();
+
+                MovesBackwards = false;
+            }
+            else if (TurnsToSkip > 0)
+            {
+                SkipTurn(this);
+
+                Logger.LogMessage($"{this.Player_ID} didn't move this turn, has {this.TurnsToSkip} turns left to skip");
+            }
+        }
+
+        public void SetCanMove(bool canMove)
+        {
+            CanMove = canMove;
+        }
+
+        public void SetTurnsToSkip(int amountTurns)
+        {
+            TurnsToSkip = amountTurns;
+        }
+
+        public void SetWinner(bool isWinner)
+        {
+            IsWinner = isWinner;
         }
 
         private void HandleBackwardMovement()
@@ -68,50 +106,11 @@ namespace Ganzenbord.Business.Players
             }
         }
 
-        public void MoveToPosition(int position)
-        {
-            Position = position;
-            HandlePlayerEnteringSquare(position);
-        }
-
-        public void PlayTurn()
-        {
-            if (CanMove)
-            {
-                Move();
-
-                MovesBackwards = false;
-                //altijd loggen met logger klasse
-            }
-            else if (TurnsToSkip > 0)
-            {
-                SkipTurn(this);
-                Logger.LogMessage($"{this.Player_ID} didn't move this turn, has {this.TurnsToSkip} turns left to skip");
-            }
-            //niet zelfde afchecken meerdere keren
-        }
-
-        public void SetCanMove(bool canMove)
-        {
-            CanMove = canMove;
-        }
-
-        public void SetTurnsToSkip(int amountTurns)
-        {
-            TurnsToSkip = amountTurns;
-        }
-
-        public void SetWinner(bool isWinner)
-        {
-            IsWinner = isWinner;
-        }
-
         private void HandlePlayerEnteringSquare(int position)
         {
-            ISquare square = Board.Instance.GetSquare(position);
+            ISquare square = _board.GetSquare(position);
 
             square.PlayerEntersSquare(this);
-            //hier zoeken naar vakje met position property van vakje zelf
         }
 
         private void SkipTurn(Player player)
@@ -124,7 +123,6 @@ namespace Ganzenbord.Business.Players
             {
                 CanMove = true;
             }
-            //zo weinig mogelijk nesting
         }
     }
 }

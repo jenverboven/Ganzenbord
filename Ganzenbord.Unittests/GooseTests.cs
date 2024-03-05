@@ -1,12 +1,26 @@
-﻿using Ganzenbord.Business;
+﻿using Ganzenbord.Business.Board;
 using Ganzenbord.Business.Dice;
+using Ganzenbord.Business.Game;
+using Ganzenbord.Business.Logger;
 using Ganzenbord.Business.Players;
+using Ganzenbord.Business.Squares;
 using Moq;
 
 namespace Ganzenbord.Unittests
 {
     public class GooseTests
     {
+        private Game SetupGame()
+        {
+            var mockLogger = new Mock<ILogger>();
+            var mockDice = new Mock<Dice>();
+            Board board = new Board(new SquareFactory());
+
+            Game game = new Game(mockLogger.Object, board, mockDice.Object, 1);
+
+            return game;
+        }
+
         [Theory]
         [InlineData(new int[] { 1, 1 }, 3, 7)]
         [InlineData(new int[] { 3, 1 }, 10, 22)]
@@ -14,7 +28,8 @@ namespace Ganzenbord.Unittests
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
-            Player player = new Player(mockLogger.Object, "player1");
+            Board board = new Board(new SquareFactory());
+            Player player = new Player(mockLogger.Object, board, "player1");
             player.MoveToPosition(startPosition);
             player.LastRolls = diceRolls;
 
@@ -32,7 +47,8 @@ namespace Ganzenbord.Unittests
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
-            Player player = new Player(mockLogger.Object, "player1");
+            Board board = new Board(new SquareFactory());
+            Player player = new Player(mockLogger.Object, board, "player1");
             player.MoveToPosition(startPosition);
             player.LastRolls = diceRolls;
 
@@ -56,11 +72,12 @@ namespace Ganzenbord.Unittests
         {
             //arrange
             var mockLogger = new Mock<ILogger>();
+            Board board = new(new SquareFactory());
             var mockDice = new Mock<Dice>();
 
             mockDice.Setup(dice => dice.RollDice()).Returns(diceRolls);
 
-            Game game = new Game(mockLogger.Object, mockDice.Object, 1);
+            Game game = new Game(mockLogger.Object, board, mockDice.Object, 1);
 
             Player player = game.Players[0];
 

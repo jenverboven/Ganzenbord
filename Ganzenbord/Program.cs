@@ -1,15 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Ganzenbord;
-using Ganzenbord.Business;
+using Ganzenbord.Business.Board;
 using Ganzenbord.Business.Dice;
+using Ganzenbord.Business.Game;
+using Ganzenbord.Business.Logger;
+using Ganzenbord.Business.Squares;
+using Microsoft.Extensions.DependencyInjection;
 
-ILogger logger = new ConsoleLogger();
-IDice dice = new Dice(2);
+var serviceProvider = new ServiceCollection()
+    .AddTransient<ILogger, ConsoleLogger>()
+    .AddTransient<ISquareFactory, SquareFactory>()
+    .AddTransient<IDice, Dice>()
+    .AddSingleton<IBoard, Board>()
+    .AddSingleton<IGame, Game>()
+    .BuildServiceProvider();
 
-Console.WriteLine("Enter the amount of players: ");
-int amountPlayers = Int32.Parse(Console.ReadLine());
-Console.WriteLine();
-
-Game game = new(logger, dice, amountPlayers);
+IGame game = serviceProvider.GetRequiredService<IGame>();
 game.Start();
