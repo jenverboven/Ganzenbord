@@ -10,6 +10,12 @@ namespace Ganzenbord.Business.Squares
 
         public void PlayerEntersSquare(Player player)
         {
+            player.Logger.LogMessage($"{player.Player_ID} landed on the well and won't be able to move until someone else arrives here");
+            if (CaughtPlayer != null)
+            {
+                CaughtPlayer.Logger.LogMessage($"{CaughtPlayer.Player_ID} was released from the well");
+            }
+
             if (CaughtPlayer != null)
             {
                 CaughtPlayer.SetCanMove(true);

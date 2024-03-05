@@ -10,6 +10,7 @@ namespace Ganzenbord.Business.Squares
         {
             player.SetCanMove(false);
             player.SetTurnsToSkip(3);
+            player.Logger.LogMessage($"{player.Player_ID} landed on the prison and won't be able to move for {player.TurnsToSkip} turns");
         }
     }
 }

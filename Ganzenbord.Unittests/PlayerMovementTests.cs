@@ -114,7 +114,8 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerMovesBackwards_PlayerCantMovePastStart()
         {
             //arrange
-            Player player = new Player("player1");
+            var mockLogger = new Mock<ILogger>();
+            Player player = new Player(mockLogger.Object, "player1");
             player.MoveToPosition(62);
             player.LastRolls = [40, 30];
 

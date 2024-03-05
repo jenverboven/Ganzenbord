@@ -1,9 +1,4 @@
 ﻿using Ganzenbord.Business.Players;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ganzenbord.Business.Squares
 {
@@ -13,6 +8,7 @@ namespace Ganzenbord.Business.Squares
 
         public void PlayerEntersSquare(Player player)
         {
+            player.Logger.LogMessage($"{player.Player_ID} landed on the goose on square {Position} and was moved forward {player.LastRolls.Sum()} spaces");
             player.Move();
         }
     }

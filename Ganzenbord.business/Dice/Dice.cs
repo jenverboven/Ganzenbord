@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ganzenbord.Business.Dice
+﻿namespace Ganzenbord.Business.Dice
 {
     public class Dice : IDice
     {
@@ -10,7 +8,7 @@ namespace Ganzenbord.Business.Dice
         public Dice()
         { }
 
-        public Dice(int amountDice)
+        public Dice(int amountDice = 2)
         {
             AmountDice = amountDice;
         }

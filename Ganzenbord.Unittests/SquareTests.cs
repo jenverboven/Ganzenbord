@@ -108,7 +108,8 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerLandsOnMaze_PutPlayerOnSquare39()
         {
             //arrange
-            Player player = new Player("player1");
+            var mockLogger = new Mock<ILogger>();
+            Player player = new Player(mockLogger.Object, "player1");
 
             player.MoveToPosition(34);
             player.LastRolls = [5, 3];

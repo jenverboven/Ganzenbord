@@ -15,12 +15,15 @@ namespace Ganzenbord.Business.Players
         public int TurnsToSkip { get; private set; } = 0;
         public int[] LastRolls { get; set; }
 
+        public ILogger Logger { get; }
+
         private int AmountDice = 2;
 
         private static Random random = new Random();
 
-        public Player(string player_ID)
+        public Player(ILogger logger, string player_ID)
         {
+            Logger = logger;
             Player_ID = player_ID;
         }
 
@@ -38,6 +41,8 @@ namespace Ganzenbord.Business.Players
             CheckForNegativePosition();
 
             HandlePlayerEnteringSquare(Position);
+
+            Logger.LogMessage("");
         }
 
         private void HandleBackwardMovement()
@@ -86,6 +91,7 @@ namespace Ganzenbord.Business.Players
             else if (TurnsToSkip > 0)
             {
                 SkipTurn(this);
+                Logger.LogMessage($"{this.Player_ID} didn't move this turn, has {this.TurnsToSkip} turns left to skip");
             }
             //niet zelfde afchecken meerdere keren
         }

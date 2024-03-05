@@ -21,13 +21,16 @@ namespace Ganzenbord.Business
 
             for (int i = 0; i < amountPlayers; i++)
             {
-                Player player = new($"Player_{i + 1}");
+                Player player = new(logger, $"Player_{i + 1}");
                 Players.Add(player);
             }
         }
 
         public void PlayRound(List<Player> players)
         {
+            Logger.LogMessage($"Starting turn {Turn}");
+            Logger.LogMessage($"--------------{new string('-', Turn.ToString().Length)}");
+
             if (Turn == 1)
             {
                 PlayFirstTurn(players);
@@ -37,6 +40,8 @@ namespace Ganzenbord.Business
                 PlayRegularTurn(players);
             }
 
+            Logger.LogMessage("");
+
             Turn++;
         }
 
@@ -45,6 +50,7 @@ namespace Ganzenbord.Business
             foreach (Player player in players)
             {
                 player.LastRolls = dice.RollDice();
+                LogDiceRolls(player);
 
                 if (player.LastRolls.Sum() != 9)
                 {
@@ -59,11 +65,21 @@ namespace Ganzenbord.Business
             }
         }
 
+        private void LogDiceRolls(Player player)
+        {
+            Logger.LogMessage($"{player.Player_ID} rolled {player.LastRolls.Sum()}");
+        }
+
         private void PlayRegularTurn(List<Player> players)
         {
             foreach (Player player in players)
             {
                 player.LastRolls = dice.RollDice();
+
+                if (player.CanMove)
+                {
+                    LogDiceRolls(player);
+                }
 
                 player.PlayTurn();
 
@@ -76,10 +92,12 @@ namespace Ganzenbord.Business
             if (player.LastRolls.Contains(6))
             {
                 player.MoveToPosition(53);
+                player.Logger.LogMessage("");
             }
             else
             {
                 player.MoveToPosition(26);
+                player.Logger.LogMessage("");
             }
         }
 
@@ -107,7 +125,7 @@ namespace Ganzenbord.Business
             }
 
             Player winner = Players.Single(player => player.IsWinner);
-            Logger.LogMessage($"{winner.Player_ID} won the game");
+            Logger.LogMessage($"{winner.Player_ID} has landed on the end and won the game!");
         }
     }
 }

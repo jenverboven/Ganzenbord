@@ -1,6 +1,4 @@
 ﻿using Ganzenbord.Business.Dice;
-using Ganzenbord.Business.Players;
-using Moq;
 
 namespace Ganzenbord.Unittests
 {

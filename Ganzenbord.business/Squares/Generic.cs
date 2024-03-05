@@ -8,7 +8,7 @@ namespace Ganzenbord.Business.Squares
 
         public void PlayerEntersSquare(Player player)
         {
-            return;
+            player.Logger.LogMessage($"{player.Player_ID} landed on {(Position == 0 ? "start" : $"square {Position}")}");
         }
     }
 }

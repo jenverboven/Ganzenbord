@@ -8,6 +8,7 @@
         string Player_ID { get; set; }
         int Position { get; }
         int TurnsToSkip { get; }
+        public ILogger Logger { get; }
 
         void Move();
 

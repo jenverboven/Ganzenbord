@@ -8,6 +8,7 @@ namespace Ganzenbord.Business.Squares
 
         public void PlayerEntersSquare(Player player)
         {
+            player.Logger.LogMessage($"{player.Player_ID} landed on death and was put back on start");
             player.MoveToPosition(0);
         }
     }

@@ -2,11 +2,6 @@
 using Ganzenbord.Business.Dice;
 using Ganzenbord.Business.Players;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ganzenbord.Unittests
 {
@@ -18,7 +13,8 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerLandsOnGoose_AndPlayerMovingForward_PlayerGetsMovedForward(int[] diceRolls, int startPosition, int endPosition)
         {
             //arrange
-            Player player = new Player("player1");
+            var mockLogger = new Mock<ILogger>();
+            Player player = new Player(mockLogger.Object, "player1");
             player.MoveToPosition(startPosition);
             player.LastRolls = diceRolls;
 
@@ -35,7 +31,8 @@ namespace Ganzenbord.Unittests
         public void WhenPlayerLandsOnGoose_AndPlayerMovingBackwards_PlayerGetsMovedBackwards(int[] diceRolls, int startPosition, int endPosition)
         {
             //arrange
-            Player player = new Player("player1");
+            var mockLogger = new Mock<ILogger>();
+            Player player = new Player(mockLogger.Object, "player1");
             player.MoveToPosition(startPosition);
             player.LastRolls = diceRolls;
 
