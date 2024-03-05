@@ -2,9 +2,9 @@
 
 namespace Ganzenbord.Business.Squares
 {
-    internal class Generic : ISquare
+    internal class Generic(int position) : ISquare
     {
-        public int Position { get; set; }
+        public int Position { get; set; } = position;
 
         public void PlayerEntersSquare(Player player)
         {

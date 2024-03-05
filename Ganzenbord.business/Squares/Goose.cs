@@ -2,9 +2,9 @@
 
 namespace Ganzenbord.Business.Squares
 {
-    internal class Goose : ISquare
+    internal class Goose(int position) : ISquare
     {
-        public int Position { get; set; }
+        public int Position { get; set; } = position;
 
         public void PlayerEntersSquare(Player player)
         {

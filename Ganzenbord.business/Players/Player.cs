@@ -13,13 +13,8 @@ namespace Ganzenbord.Business.Players
         public bool IsWinner { get; set; } = false;
         public int Position { get; set; } = 0;
         public int TurnsToSkip { get; private set; } = 0;
-        public int[] LastRolls { get; set; }
-
+        public int[] LastRolls { get; set; } = [0, 0];
         public ILogger Logger { get; }
-
-        private int AmountDice = 2;
-
-        private static Random random = new Random();
 
         public Player(ILogger logger, string player_ID)
         {

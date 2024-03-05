@@ -39,11 +39,11 @@ namespace Ganzenbord.Business
                 {
                     SquareType type = configuration[i];
 
-                    squares.Add(SquareFactory.create(type, i));
+                    squares.Add(SquareFactory.Create(type, i));
                 }
                 else
                 {
-                    squares.Add(SquareFactory.create(SquareType.Generic, i));
+                    squares.Add(SquareFactory.Create(SquareType.Generic, i));
                 }
             }
         }

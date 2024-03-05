@@ -2,9 +2,9 @@
 
 namespace Ganzenbord.Business.Squares
 {
-    public class Bridge : ISquare
+    public class Bridge(int position) : ISquare
     {
-        public int Position { get; set; }
+        public int Position { get; set; } = position;
 
         public void PlayerEntersSquare(Player player)
         {

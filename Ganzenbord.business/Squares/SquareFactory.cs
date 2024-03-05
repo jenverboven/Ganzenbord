@@ -2,53 +2,44 @@
 {
     public class SquareFactory
     {
-        public static ISquare create(SquareType type, int position)
+        public static ISquare Create(SquareType type, int position)
         {
             switch (type)
             {
                 case SquareType.Bridge:
-                    Bridge bridge = new Bridge();
-                    bridge.Position = position;
+                    Bridge bridge = new(position);
                     return bridge;
 
-                case SquareType.Inn:
-                    Inn inn = new Inn();
-                    inn.Position = position;
-                    return inn;
-
-                case SquareType.Well:
-                    Well well = new Well();
-                    well.Position = position;
-                    return well;
-
-                case SquareType.Maze:
-                    Maze maze = new Maze();
-                    maze.Position = position;
-                    return maze;
-
-                case SquareType.Prison:
-                    Prison prison = new Prison();
-                    prison.Position = position;
-                    return prison;
-
                 case SquareType.Death:
-                    Death death = new Death();
-                    death.Position = position;
+                    Death death = new(position);
                     return death;
 
                 case SquareType.End:
-                    End end = new End();
-                    end.Position = position;
+                    End end = new(position);
                     return end;
 
                 case SquareType.Generic:
-                    Generic generic = new Generic();
-                    generic.Position = position;
+                    Generic generic = new(position);
                     return generic;
 
+                case SquareType.Inn:
+                    Inn inn = new(position);
+                    return inn;
+
+                case SquareType.Maze:
+                    Maze maze = new(position);
+                    return maze;
+
+                case SquareType.Prison:
+                    Prison prison = new(position);
+                    return prison;
+
+                case SquareType.Well:
+                    Well well = new(position);
+                    return well;
+
                 case SquareType.Goose:
-                    Goose goose = new Goose();
-                    goose.Position = position;
+                    Goose goose = new(position);
                     return goose;
 
                 default:

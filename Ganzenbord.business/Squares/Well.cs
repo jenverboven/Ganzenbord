@@ -2,9 +2,9 @@
 
 namespace Ganzenbord.Business.Squares
 {
-    internal class Well : ISquare
+    internal class Well(int position) : ISquare
     {
-        public int Position { get; set; }
+        public int Position { get; set; } = position;
 
         private Player? CaughtPlayer { get; set; }
 
